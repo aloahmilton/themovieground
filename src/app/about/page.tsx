@@ -35,7 +35,7 @@ export default function AboutPage() {
             <div className="grid gap-3 py-5 sm:grid-cols-[4rem_1fr_1.4fr]">
               <span className="font-mono text-sm text-red-400">02</span>
               <h3 className="font-semibold text-white">Useful public data</h3>
-              <p className="text-sm leading-6 text-zinc-400">TMDB powers movie and TV discovery; TheSportsDB and Jolpica provide sports schedules, results, and Formula 1 data.</p>
+              <p className="text-sm leading-6 text-zinc-400">Movie and TV information powers the catalog; sports feeds provide schedules, results, and Formula 1 data.</p>
             </div>
             <div className="grid gap-3 py-5 sm:grid-cols-[4rem_1fr_1.4fr]">
               <span className="font-mono text-sm text-red-400">03</span>
@@ -54,6 +54,13 @@ export default function AboutPage() {
           </a>
           <Link href="/donate" className="text-sm text-zinc-400 hover:text-white">Support the project</Link>
         </div>
+        <p className="mt-10 border-t border-white/10 pt-6 text-xs leading-5 text-zinc-500">
+          Movie and TV data provided by{" "}
+          <a href="https://www.themoviedb.org/" target="_blank" rel="noreferrer" className="text-zinc-300 underline underline-offset-2">
+            TMDB
+          </a>
+          . This product uses the TMDB API but is not endorsed or certified by TMDB.
+        </p>
       </div>
     </div>
   );

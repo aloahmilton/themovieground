@@ -2,15 +2,20 @@ const TMDB_BASE = "https://api.themoviedb.org/3";
 const IMAGE_BASE = "https://image.tmdb.org/t/p";
 
 function getApiKey() {
-  const key = process.env.TMDB_API_KEY || process.env.NEXT_PUBLIC_TMDB_API_KEY;
-  if (!key) {
-    console.warn("TMDB_API_KEY is not set. Get a free key at https://www.themoviedb.org/settings/api");
-  }
-  return key || "";
+  const key = (process.env.TMDB_API_KEY || process.env.NEXT_PUBLIC_TMDB_API_KEY || "").trim();
+  return key === "your_tmdb_api_key_here" ? "" : key;
+}
+
+export function hasTmdbApiKey() {
+  return Boolean(getApiKey());
 }
 
 async function tmdbFetch<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
   const key = getApiKey();
+  if (!key) {
+    throw new Error("TMDB_API_KEY is not configured. Add a valid key to .env.local.");
+  }
+
   const url = new URL(`${TMDB_BASE}${endpoint}`);
   url.searchParams.set("api_key", key);
   url.searchParams.set("language", "en-US");

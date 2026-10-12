@@ -13,7 +13,7 @@ export default function Hero({ item }: Props) {
   const rating = item.vote_average ? item.vote_average.toFixed(1) : null;
 
   return (
-    <section className="relative h-[70vh] min-h-[480px] max-h-[720px] w-full overflow-hidden">
+    <section className="relative h-[52vh] min-h-[360px] max-h-[520px] w-full overflow-hidden">
       <div className="absolute inset-0">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

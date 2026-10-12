@@ -9,10 +9,22 @@ import {
   getOnTheAir,
   getHiddenGems,
   getInDemand,
+  hasTmdbApiKey,
   Movie,
 } from "@/lib/tmdb";
 
 export const revalidate = 3600;
+
+function CatalogUnavailable() {
+  return (
+    <div className="flex h-[50vh] items-center justify-center text-zinc-400">
+      <div className="space-y-4 px-4 text-center">
+        <h1 className="text-3xl font-bold text-white">The Movie Ground</h1>
+        <p>The catalog is temporarily unavailable. Please try again later.</p>
+      </div>
+    </div>
+  );
+}
 
 async function safeFetch<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   try {
@@ -25,6 +37,14 @@ async function safeFetch<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
 
 export default async function HomePage() {
   const empty = { results: [] as Movie[] };
+
+  if (!hasTmdbApiKey()) {
+    return (
+      <div className="min-h-screen bg-black">
+        <CatalogUnavailable />
+      </div>
+    );
+  }
 
   const [
     trending,
@@ -61,30 +81,14 @@ export default async function HomePage() {
       {heroItem ? (
         <Hero item={heroItem} />
       ) : (
-        <div className="h-[50vh] flex items-center justify-center text-zinc-400">
-          <div className="text-center space-y-4 px-4">
-            <h1 className="text-3xl font-bold text-white">The Movie Ground</h1>
-            <p>Add your free TMDB API key to start exploring.</p>
-            <p className="text-sm">
-              Get one at{" "}
-              <a
-                href="https://www.themoviedb.org/settings/api"
-                className="text-red-400 underline"
-                target="_blank"
-                rel="noreferrer"
-              >
-                themoviedb.org/settings/api
-              </a>
-            </p>
-          </div>
-        </div>
+        <CatalogUnavailable />
       )}
 
-      <div className="relative -mt-16 z-10 space-y-2 pb-8">
+      <div className="relative -mt-12 z-10 space-y-2 pb-8">
+        <MovieRow id="most-watched" title="Popular Movies" items={popularMovies.results} mediaType="movie" />
         <MovieRow title="Trending This Week" items={trending.results.slice(0, 20)} />
         <MovieRow title="🔥 In Demand" items={demandMovies.results} mediaType="movie" />
         <MovieRow title="💎 Hidden Gems – Movies" items={hiddenMovies.results} mediaType="movie" />
-        <MovieRow title="Popular Movies" items={popularMovies.results} mediaType="movie" />
         <MovieRow title="Top Rated Movies" items={topRatedMovies.results} mediaType="movie" />
         <MovieRow title="Now Playing in Theaters" items={nowPlaying.results} mediaType="movie" />
         <MovieRow title="Coming Soon" items={upcoming.results} mediaType="movie" />
