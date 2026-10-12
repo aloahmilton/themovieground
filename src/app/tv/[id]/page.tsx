@@ -5,12 +5,17 @@ import {
   getImageUrl,
   getTitle,
   getYear,
+  getWatchProviders,
   MovieDetails,
 } from "@/lib/tmdb";
 import MovieRow from "@/components/MovieRow";
 import WatchlistButton from "@/components/WatchlistButton";
+import WhereToWatch from "@/components/WhereToWatch";
 
-type Props = { params: Promise<{ id: string }> };
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ region?: string }>;
+};
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
@@ -22,8 +27,8 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
-export default async function TvPage({ params }: Props) {
-  const { id } = await params;
+export default async function TvPage({ params, searchParams }: Props) {
+  const [{ id }, search] = await Promise.all([params, searchParams]);
   let show: MovieDetails;
   try {
     show = await getTvDetails(Number(id));
@@ -37,6 +42,9 @@ export default async function TvPage({ params }: Props) {
   const cast = show.credits?.cast?.slice(0, 12) || [];
   const similar = show.similar?.results || show.recommendations?.results || [];
   const year = getYear(show);
+  const requestedRegion = search.region?.toUpperCase() || "US";
+  const region = /^[A-Z]{2}$/.test(requestedRegion) ? requestedRegion : "US";
+  const providers = await getWatchProviders("tv", show.id).then((data) => data.results[region] || null).catch(() => null);
 
   return (
     <div className="min-h-screen bg-black">
@@ -64,6 +72,8 @@ export default async function TvPage({ params }: Props) {
 
           <div className="flex-1 space-y-5">
             <div>
+
+            <WhereToWatch availability={providers} detailPath={`/tv/${show.id}`} region={region} />
               <h1 className="text-3xl md:text-5xl font-black text-white leading-tight">{getTitle(show)}</h1>
               {show.tagline && <p className="text-zinc-400 italic mt-2">{show.tagline}</p>}
             </div>

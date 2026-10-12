@@ -9,6 +9,8 @@ import {
   getOnTheAir,
   getHiddenGems,
   getInDemand,
+  getMovieDetails,
+  getTvDetails,
   hasTmdbApiKey,
   Movie,
 } from "@/lib/tmdb";
@@ -75,11 +77,20 @@ export default async function HomePage() {
   ]);
 
   const heroItem = trending.results[0] || popularMovies.results[0];
+  const heroType = heroItem?.media_type || (heroItem?.title ? "movie" : "tv");
+  const heroDetails = heroItem
+    ? await (heroType === "tv" ? getTvDetails(heroItem.id) : getMovieDetails(heroItem.id)).catch(() => null)
+    : null;
+  const heroTrailer = heroDetails?.videos?.results?.find(
+    (video) => video.site === "YouTube" && video.type === "Trailer"
+  ) || heroDetails?.videos?.results?.find(
+    (video) => video.site === "YouTube" && video.type === "Teaser"
+  );
 
   return (
     <div className="min-h-screen bg-black">
       {heroItem ? (
-        <Hero item={heroItem} />
+        <Hero item={heroItem} trailerKey={heroTrailer?.key} />
       ) : (
         <CatalogUnavailable />
       )}

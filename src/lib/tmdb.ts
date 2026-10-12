@@ -66,6 +66,20 @@ export type MovieDetails = Movie & {
 
 export type Genre = { id: number; name: string };
 
+export type WatchProvider = {
+  provider_id: number;
+  provider_name: string;
+};
+
+export type WatchProviderRegion = {
+  link: string;
+  flatrate?: WatchProvider[];
+  free?: WatchProvider[];
+  ads?: WatchProvider[];
+  rent?: WatchProvider[];
+  buy?: WatchProvider[];
+};
+
 export function getImageUrl(path: string | null, size: "w300" | "w500" | "w780" | "original" | "w1280" = "w500") {
   if (!path) return "/placeholder-poster.svg";
   return `${IMAGE_BASE}/${size}${path}`;
@@ -121,6 +135,10 @@ export async function getTvDetails(id: number) {
   return tmdbFetch<MovieDetails>(`/tv/${id}`, {
     append_to_response: "videos,credits,similar,recommendations",
   });
+}
+
+export async function getWatchProviders(type: "movie" | "tv", id: number) {
+  return tmdbFetch<{ results: Record<string, WatchProviderRegion> }>(`/${type}/${id}/watch/providers`);
 }
 
 export async function getGenres(type: "movie" | "tv" = "movie") {

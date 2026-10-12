@@ -5,12 +5,17 @@ import {
   getImageUrl,
   getTitle,
   getYear,
+  getWatchProviders,
   MovieDetails,
 } from "@/lib/tmdb";
 import MovieRow from "@/components/MovieRow";
 import WatchlistButton from "@/components/WatchlistButton";
+import WhereToWatch from "@/components/WhereToWatch";
 
-type Props = { params: Promise<{ id: string }> };
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ region?: string }>;
+};
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
@@ -22,8 +27,8 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
-export default async function MoviePage({ params }: Props) {
-  const { id } = await params;
+export default async function MoviePage({ params, searchParams }: Props) {
+  const [{ id }, search] = await Promise.all([params, searchParams]);
   let movie: MovieDetails;
   try {
     movie = await getMovieDetails(Number(id));
@@ -38,6 +43,9 @@ export default async function MoviePage({ params }: Props) {
   const similar = movie.similar?.results || movie.recommendations?.results || [];
   const year = getYear(movie);
   const runtime = movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : null;
+  const requestedRegion = search.region?.toUpperCase() || "US";
+  const region = /^[A-Z]{2}$/.test(requestedRegion) ? requestedRegion : "US";
+  const providers = await getWatchProviders("movie", movie.id).then((data) => data.results[region] || null).catch(() => null);
 
   return (
     <div className="min-h-screen bg-black">
@@ -65,6 +73,8 @@ export default async function MoviePage({ params }: Props) {
 
           <div className="flex-1 space-y-5">
             <div>
+
+            <WhereToWatch availability={providers} detailPath={`/movie/${movie.id}`} region={region} />
               <h1 className="text-3xl md:text-5xl font-black text-white leading-tight">{getTitle(movie)}</h1>
               {movie.tagline && <p className="text-zinc-400 italic mt-2">{movie.tagline}</p>}
             </div>

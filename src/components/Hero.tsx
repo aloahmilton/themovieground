@@ -3,9 +3,10 @@ import { Movie, getImageUrl, getTitle, getYear } from "@/lib/tmdb";
 
 type Props = {
   item: Movie;
+  trailerKey?: string;
 };
 
-export default function Hero({ item }: Props) {
+export default function Hero({ item, trailerKey }: Props) {
   const type = item.media_type || (item.title ? "movie" : "tv");
   const href = type === "tv" ? `/tv/${item.id}` : `/movie/${item.id}`;
   const title = getTitle(item);
@@ -19,8 +20,17 @@ export default function Hero({ item }: Props) {
         <img
           src={getImageUrl(item.backdrop_path || item.poster_path, "w1280")}
           alt={title}
-          className="w-full h-full object-cover object-center"
+          className={`h-full w-full object-cover object-center ${trailerKey ? "opacity-40" : ""}`}
         />
+        {trailerKey && (
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${trailerKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${trailerKey}&playsinline=1&rel=0&modestbranding=1`}
+            title={`${title} official trailer preview`}
+            allow="autoplay; encrypted-media; picture-in-picture"
+            referrerPolicy="strict-origin-when-cross-origin"
+            className="absolute inset-0 h-full w-full border-0"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40" />
       </div>
@@ -50,20 +60,24 @@ export default function Hero({ item }: Props) {
           </p>
 
           <div className="flex flex-wrap gap-3 pt-2">
+            {trailerKey && (
+              <a
+                href={`https://www.youtube.com/watch?v=${trailerKey}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 font-semibold text-black transition-colors hover:bg-gray-200"
+              >
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                Watch Trailer
+              </a>
+            )}
             <Link
               href={href}
-              className="inline-flex items-center gap-2 bg-white text-black font-semibold px-6 py-3 rounded-md hover:bg-gray-200 transition-colors"
+              className="inline-flex items-center gap-2 rounded-md border border-white/30 bg-white/20 px-6 py-3 font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/30"
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-              More Info
-            </Link>
-            <Link
-              href={href}
-              className="inline-flex items-center gap-2 bg-white/20 text-white font-semibold px-6 py-3 rounded-md backdrop-blur-sm hover:bg-white/30 transition-colors border border-white/30"
-            >
-              Details
+              Where to Watch
             </Link>
           </div>
         </div>
