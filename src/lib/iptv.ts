@@ -6,6 +6,9 @@ export type IptvChannel = {
   streamUrl: string;
 };
 
+const PLAYLIST_CACHE_TTL_MS = 30 * 60 * 1000;
+let playlistCache: { url: string; channels: IptvChannel[]; expiresAt: number } | null = null;
+
 function readAttributes(line: string) {
   return Object.fromEntries(
     [...line.matchAll(/([\w-]+)="([^"]*)"/g)].map((match) => [match[1], match[2]])
@@ -54,16 +57,26 @@ export async function getIptvChannels() {
   const configuredUrl = process.env.IPTV_PLAYLIST_URL?.trim();
   if (!configuredUrl) return [];
 
+  if (playlistCache?.url === configuredUrl && playlistCache.expiresAt > Date.now()) {
+    return playlistCache.channels;
+  }
+
   const playlistUrl = new URL(configuredUrl);
   if (playlistUrl.protocol !== "https:") {
     throw new Error("The IPTV playlist URL must use HTTPS.");
   }
 
   const response = await fetch(playlistUrl, {
+    cache: "no-store",
     headers: { Accept: "application/vnd.apple.mpegurl, application/x-mpegURL, text/plain" },
-    next: { revalidate: 1800 },
   });
   if (!response.ok) throw new Error(`IPTV playlist request failed: ${response.status}`);
 
-  return parseM3uPlaylist(await response.text());
+  const channels = parseM3uPlaylist(await response.text());
+  playlistCache = {
+    url: configuredUrl,
+    channels,
+    expiresAt: Date.now() + PLAYLIST_CACHE_TTL_MS,
+  };
+  return channels;
 }
