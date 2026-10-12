@@ -17,20 +17,44 @@ export default function WatchlistPage() {
     setList(next);
   };
 
+  const exportJson = () => {
+    const blob = new Blob([JSON.stringify(list, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "the-movie-ground-watchlist.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-black pt-24 pb-16">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">My Watchlist</h1>
-        <p className="text-zinc-400 mb-10">
-          {list.length === 0
-            ? "Your list is empty. Add titles from any movie or TV page."
-            : `${list.length} title${list.length > 1 ? "s" : ""} saved`}
-        </p>
+
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
+          <p className="text-zinc-400">
+            {list.length === 0
+              ? "Your list is empty. Add titles from any movie or TV page."
+              : `${list.length} title${list.length > 1 ? "s" : ""} saved`}
+          </p>
+          {list.length > 0 && (
+            <button
+              onClick={exportJson}
+              className="text-sm bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded-md border border-zinc-700 transition self-start"
+            >
+              Export JSON
+            </button>
+          )}
+        </div>
 
         {list.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-zinc-500 mb-6">Start building your list from the home page or search.</p>
-            <Link href="/" className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-md transition">
+            <Link
+              href="/"
+              className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-md transition"
+            >
               Explore Titles
             </Link>
           </div>
