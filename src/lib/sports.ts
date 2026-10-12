@@ -66,3 +66,39 @@ export const POPULAR_LEAGUES = [
   { id: "4391", name: "NFL", sport: "American Football" },
   { id: "4424", name: "MLB", sport: "Baseball" },
 ];
+
+const F1_BASE = "https://api.jolpi.ca/ergast/f1";
+
+export type F1Race = {
+  season: string;
+  round: string;
+  raceName: string;
+  date: string;
+  time?: string;
+  Circuit: {
+    circuitName: string;
+    Location: { locality: string; country: string };
+  };
+};
+
+export type F1Standing = {
+  position: string;
+  points: string;
+  wins: string;
+  Driver: { givenName: string; familyName: string; nationality: string };
+  Constructors: { name: string }[];
+};
+
+export async function getCurrentF1Races() {
+  const res = await fetch(`${F1_BASE}/current.json`, { next: { revalidate: 3600 } });
+  if (!res.ok) throw new Error("F1 API error");
+  const data = await res.json();
+  return (data.MRData?.RaceTable?.Races || []) as F1Race[];
+}
+
+export async function getCurrentF1DriverStandings() {
+  const res = await fetch(`${F1_BASE}/current/driverStandings.json`, { next: { revalidate: 3600 } });
+  if (!res.ok) throw new Error("F1 API error");
+  const data = await res.json();
+  return (data.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings || []) as F1Standing[];
+}
