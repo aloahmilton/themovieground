@@ -1,100 +1,81 @@
 # The Movie Ground 🎬
 
-A beautiful **Netflix + Prime Video + MovieBox** style movie & TV discovery platform.
+A complete **Netflix + Prime Video + MovieBox** style movie & TV discovery platform.
 
-Powered entirely by the free **TMDB (The Movie Database) API**.
-
-![The Movie Ground](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
-![TMDB](https://img.shields.io/badge/API-TMDB-01b4e4?style=flat-square)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square)
-![Tailwind](https://img.shields.io/badge/Tailwind-4-38bdf8?style=flat-square)
+Powered by the free **TMDB API**.
 
 ## Features
 
-- 🔥 **Trending**, Popular, Top Rated, Upcoming, Now Playing, On The Air
-- 🔍 Full **search** across movies & TV shows
-- 🎬 Movie & TV **detail pages** with cast, trailers, similar titles
-- 🌙 Dark Netflix-style UI with horizontal carousels
-- 📱 Fully responsive (mobile + desktop)
-- ⚡ Server-side rendering + caching (Next.js App Router)
-- 🆓 100% free APIs (only needs a free TMDB key)
+### Discovery
+- 🔥 **Trending** this week
+- 🔥 **In Demand** (high popularity + votes)
+- 💎 **Hidden Gems** (high rating, lower popularity)
+- Popular, Top Rated, Now Playing, Upcoming, On The Air
+- Full **Genre** browser (Movies + TV)
+- Language-aware discovery
+
+### Search & Details
+- Powerful multi-search (movies + TV)
+- Movie & TV detail pages with cast, trailers, similar titles
+- Ratings, runtime, seasons, status
+
+### Personal
+- **My Watchlist** (saved in browser localStorage)
+- One-click “My List” button on every detail page
+
+### UI/UX
+- Dark Netflix-inspired design
+- Horizontal carousels
+- Fully responsive (mobile-first polish)
+- Fast SSR + 1-hour cache
 
 ## Quick Start
 
-### 1. Get a free TMDB API Key
+1. Get free TMDB API key → https://www.themoviedb.org/settings/api
+2. ```bash
+   git clone https://github.com/aloahmilton/themovieground.git
+   cd themovieground
+   npm install
+   cp .env.example .env.local
+   ```
+3. Put your key in `.env.local`:
+   ```
+   TMDB_API_KEY=your_key_here
+   ```
+4. ```bash
+   npm run dev
+   ```
+5. Open http://localhost:3000
 
-1. Create an account at [themoviedb.org](https://www.themoviedb.org/signup)
-2. Go to **Settings → API**
-3. Request an API Key (choose **Developer**)
-4. Copy your **API Key (v3 auth)**
-
-### 2. Clone & Install
-
-```bash
-git clone https://github.com/aloahmilton/themovieground.git
-cd themovieground
-npm install
-```
-
-### 3. Add your API key
-
-```bash
-cp .env.example .env.local
-```
-
-Edit `.env.local` and paste your key:
-
-```
-TMDB_API_KEY=your_actual_key_here
-```
-
-### 4. Run
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000)
-
-## Deploy to Vercel (1-click)
-
-1. Push this repo to GitHub (already done)
-2. Import the project on [vercel.com](https://vercel.com)
-3. Add Environment Variable: `TMDB_API_KEY` = your key
-4. Deploy
+## Deploy on Vercel
+Import the repo → add env var `TMDB_API_KEY` → Deploy.
 
 ## Project Structure
-
 ```
 src/
 ├── app/
-│   ├── page.tsx              # Home (Netflix-style rows)
-│   ├── search/page.tsx       # Search + filter Movies/TV
-│   ├── movie/[id]/page.tsx  # Movie details + cast + trailer
-│   └── tv/[id]/page.tsx     # TV details
+│   ├── page.tsx                 # Home with all rows
+│   ├── search/page.tsx
+│   ├── genres/page.tsx          # Genre browser
+│   ├── genres/[id]/page.tsx
+│   ├── watchlist/page.tsx       # Personal list
+│   ├── movie/[id]/page.tsx
+│   └── tv/[id]/page.tsx
 ├── components/
 │   ├── Navbar.tsx
 │   ├── Hero.tsx
 │   ├── MovieCard.tsx
-│   └── MovieRow.tsx
+│   ├── MovieRow.tsx
+│   └── WatchlistButton.tsx
 └── lib/
-    └── tmdb.ts               # All TMDB API helpers
+    ├── tmdb.ts                  # All TMDB helpers + Hidden Gems / In Demand
+    └── watchlist.ts             # localStorage watchlist
 ```
 
-## Tech Stack
-
-- **Next.js 16** (App Router) + TypeScript
-- **Tailwind CSS 4**
-- **TMDB API** (free)
-
-## Attribution
-
-This product uses the TMDB API but is not endorsed or certified by TMDB.
+## Notes
+- This is a **discovery** platform. It does not stream or download copyrighted content.
+- Watchlist is stored locally in your browser.
+- Attribution: This product uses the TMDB API but is not endorsed or certified by TMDB.
 
 ## License
-
-MIT — feel free to use, fork, and improve.
-
----
-
-**The Movie Ground** — Discover everything. Stream nowhere (legally).
+MIT
