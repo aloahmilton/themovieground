@@ -18,8 +18,9 @@ export default function RootLayout({
     <html lang="en">
       <body className="min-h-screen bg-black text-white antialiased">
         <Navbar />
-        <main className="pt-0">{children}</main>
-        <footer className="border-t border-zinc-800 mt-16 py-10 px-4 text-center text-zinc-500 text-sm">
+        <div className="lg:pl-64">
+          <main className="pt-14 sm:pt-16 lg:pt-0">{children}</main>
+          <footer className="border-t border-zinc-800 mt-16 py-10 px-4 text-center text-zinc-500 text-sm">
           <p>
             The Movie Ground — Data provided by{" "}
             <a
@@ -33,7 +34,8 @@ export default function RootLayout({
             . This product uses the TMDB API but is not endorsed or certified by TMDB.
           </p>
           <p className="mt-2">Built for discovery. No streaming of copyrighted content.</p>
-        </footer>
+          </footer>
+        </div>
       </body>
     </html>
   );

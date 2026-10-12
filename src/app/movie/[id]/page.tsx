@@ -53,7 +53,7 @@ export default async function MoviePage({ params }: Props) {
       </div>
 
       <div className="relative -mt-48 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-8 md:flex-row">
           <div className="flex-shrink-0 w-48 md:w-64 mx-auto md:mx-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
