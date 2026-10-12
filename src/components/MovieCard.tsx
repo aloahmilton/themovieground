@@ -4,9 +4,10 @@ import { Movie, getImageUrl, getTitle, getYear } from "@/lib/tmdb";
 type Props = {
   item: Movie;
   mediaType?: "movie" | "tv";
+  grid?: boolean;
 };
 
-export default function MovieCard({ item, mediaType }: Props) {
+export default function MovieCard({ item, mediaType, grid = false }: Props) {
   const type = mediaType || item.media_type || (item.title ? "movie" : "tv");
   const href = type === "tv" ? `/tv/${item.id}` : `/movie/${item.id}`;
   const title = getTitle(item);
@@ -14,7 +15,7 @@ export default function MovieCard({ item, mediaType }: Props) {
   const rating = item.vote_average ? item.vote_average.toFixed(1) : null;
 
   return (
-    <Link href={href} className="group relative flex-shrink-0 w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px]">
+    <Link href={href} className={`group relative min-w-0 ${grid ? "w-full" : "w-[140px] flex-shrink-0 sm:w-[160px] md:w-[180px] lg:w-[200px]"}`}>
       <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-zinc-900 shadow-lg transition-transform duration-300 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-red-900/20">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

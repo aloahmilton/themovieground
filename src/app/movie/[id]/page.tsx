@@ -43,8 +43,8 @@ export default async function MoviePage({ params, searchParams }: Props) {
   const similar = movie.similar?.results || movie.recommendations?.results || [];
   const year = getYear(movie);
   const runtime = movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : null;
-  const requestedRegion = search.region?.toUpperCase() || "US";
-  const region = /^[A-Z]{2}$/.test(requestedRegion) ? requestedRegion : "US";
+  const requestedRegion = search.region?.toUpperCase() || "CM";
+  const region = /^[A-Z]{2}$/.test(requestedRegion) ? requestedRegion : "CM";
   const providers = await getWatchProviders("movie", movie.id).then((data) => data.results[region] || null).catch(() => null);
 
   return (
@@ -74,7 +74,7 @@ export default async function MoviePage({ params, searchParams }: Props) {
           <div className="flex-1 space-y-5">
             <div>
 
-            <WhereToWatch availability={providers} detailPath={`/movie/${movie.id}`} region={region} />
+            <WhereToWatch availability={providers} detailPath={`/movie/${movie.id}`} region={region} title={getTitle(movie)} />
               <h1 className="text-3xl md:text-5xl font-black text-white leading-tight">{getTitle(movie)}</h1>
               {movie.tagline && <p className="text-zinc-400 italic mt-2">{movie.tagline}</p>}
             </div>

@@ -15,9 +15,10 @@ type Props = {
   availability: WatchProviderRegion | null;
   detailPath: string;
   region: string;
+  title: string;
 };
 
-export default function WhereToWatch({ availability, detailPath, region }: Props) {
+export default function WhereToWatch({ availability, detailPath, region, title }: Props) {
   const offers = [
     { label: "Stream", providers: availability?.flatrate },
     { label: "Free", providers: availability?.free },
@@ -25,6 +26,8 @@ export default function WhereToWatch({ availability, detailPath, region }: Props
     { label: "Rent", providers: availability?.rent },
     { label: "Buy", providers: availability?.buy },
   ].filter((offer) => offer.providers?.length);
+  const hasOffers = offers.length > 0;
+  const providerSearch = availability?.link || `https://www.justwatch.com/${region.toLowerCase()}/search?q=${encodeURIComponent(title)}`;
 
   return (
     <section className="mt-8 border-y border-white/10 py-6">
@@ -49,7 +52,7 @@ export default function WhereToWatch({ availability, detailPath, region }: Props
         </form>
       </div>
 
-      {offers.length > 0 ? (
+      {hasOffers ? (
         <div className="mt-5 flex flex-wrap gap-x-8 gap-y-4">
           {offers.map((offer) => (
             <div key={offer.label}>
@@ -57,19 +60,27 @@ export default function WhereToWatch({ availability, detailPath, region }: Props
               <p className="text-sm text-zinc-200">{offer.providers?.map((provider) => provider.provider_name).join(", ")}</p>
             </div>
           ))}
-          {availability?.link && (
-            <a
-              href={availability.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ml-auto inline-flex items-center rounded-md bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700"
-            >
-              Watch Now
-            </a>
-          )}
+          <a
+            href={providerSearch}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-auto inline-flex items-center rounded-md bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+          >
+            Watch Now
+          </a>
         </div>
       ) : (
-        <p className="mt-5 text-sm text-zinc-500">No provider listings found for this region.</p>
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
+          <p className="text-sm text-zinc-500">No provider listings found for this region.</p>
+          <a
+            href={providerSearch}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center rounded-md bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+          >
+            Find Watch Options
+          </a>
+        </div>
       )}
       <p className="mt-4 text-xs text-zinc-600">Playback quality and offline downloads are managed by each provider.</p>
     </section>

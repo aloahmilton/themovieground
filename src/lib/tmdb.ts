@@ -94,8 +94,8 @@ export function getYear(item: Movie) {
   return date ? date.slice(0, 4) : "";
 }
 
-export async function getTrending(media: "all" | "movie" | "tv" = "all", time: "day" | "week" = "week") {
-  return tmdbFetch<{ results: Movie[] }>(`/trending/${media}/${time}`);
+export async function getTrending(media: "all" | "movie" | "tv" = "all", time: "day" | "week" = "week", page = 1) {
+  return tmdbFetch<{ results: Movie[] }>(`/trending/${media}/${time}`, { page: String(page) });
 }
 
 export async function getPopular(type: "movie" | "tv" = "movie", page = 1) {

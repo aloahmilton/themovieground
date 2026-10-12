@@ -1,11 +1,14 @@
 import MovieCard from "@/components/MovieCard";
 import LanguageFilter from "@/components/LanguageFilter";
 import { searchMulti, getPopular, discoverWithFilters, Movie } from "@/lib/tmdb";
+import { getCatalogPage } from "@/lib/catalog";
+import { getCatalog } from "@/lib/catalogs";
+import CatalogResults from "@/components/CatalogResults";
 import Link from "next/link";
 import { Suspense } from "react";
 
 type Props = {
-  searchParams: Promise<{ q?: string; type?: string; page?: string; lang?: string }>;
+  searchParams: Promise<{ q?: string; type?: string; page?: string; lang?: string; list?: string }>;
 };
 
 export default async function SearchPage({ searchParams }: Props) {
@@ -14,12 +17,16 @@ export default async function SearchPage({ searchParams }: Props) {
   const typeFilter = params.type as "movie" | "tv" | undefined;
   const page = Number(params.page) || 1;
   const lang = params.lang;
+  const catalog = params.list ? getCatalog(params.list) : undefined;
 
   let results: Movie[] = [];
   let totalResults = 0;
   let title = "Explore";
 
-  if (query) {
+  if (catalog && !query) {
+    results = await getCatalogPage(catalog.id, page).catch(() => []);
+    title = catalog.title;
+  } else if (query) {
     const data = await searchMulti(query, page).catch(() => ({ results: [], total_results: 0 }));
     results = data.results.filter((r) => {
       if (!r.media_type || (r.media_type !== "movie" && r.media_type !== "tv")) return false;
@@ -99,6 +106,8 @@ export default async function SearchPage({ searchParams }: Props) {
               Back to Home
             </Link>
           </div>
+        ) : catalog && !query ? (
+          <CatalogResults catalogId={catalog.id} initialItems={results} mediaType={catalog.mediaType} page={page} />
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
             {results.map((item) => (

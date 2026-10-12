@@ -42,8 +42,8 @@ export default async function TvPage({ params, searchParams }: Props) {
   const cast = show.credits?.cast?.slice(0, 12) || [];
   const similar = show.similar?.results || show.recommendations?.results || [];
   const year = getYear(show);
-  const requestedRegion = search.region?.toUpperCase() || "US";
-  const region = /^[A-Z]{2}$/.test(requestedRegion) ? requestedRegion : "US";
+  const requestedRegion = search.region?.toUpperCase() || "CM";
+  const region = /^[A-Z]{2}$/.test(requestedRegion) ? requestedRegion : "CM";
   const providers = await getWatchProviders("tv", show.id).then((data) => data.results[region] || null).catch(() => null);
 
   return (
@@ -73,7 +73,7 @@ export default async function TvPage({ params, searchParams }: Props) {
           <div className="flex-1 space-y-5">
             <div>
 
-            <WhereToWatch availability={providers} detailPath={`/tv/${show.id}`} region={region} />
+            <WhereToWatch availability={providers} detailPath={`/tv/${show.id}`} region={region} title={getTitle(show)} />
               <h1 className="text-3xl md:text-5xl font-black text-white leading-tight">{getTitle(show)}</h1>
               {show.tagline && <p className="text-zinc-400 italic mt-2">{show.tagline}</p>}
             </div>

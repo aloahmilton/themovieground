@@ -1,14 +1,8 @@
 import Hero from "@/components/Hero";
-import MovieRow from "@/components/MovieRow";
+import HomeCatalog from "@/components/HomeCatalog";
 import {
   getTrending,
   getPopular,
-  getTopRated,
-  getUpcoming,
-  getNowPlaying,
-  getOnTheAir,
-  getHiddenGems,
-  getInDemand,
   getMovieDetails,
   getTvDetails,
   hasTmdbApiKey,
@@ -38,8 +32,6 @@ async function safeFetch<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
 }
 
 export default async function HomePage() {
-  const empty = { results: [] as Movie[] };
-
   if (!hasTmdbApiKey()) {
     return (
       <div className="min-h-screen bg-black">
@@ -48,35 +40,8 @@ export default async function HomePage() {
     );
   }
 
-  const [
-    trending,
-    popularMovies,
-    topRatedMovies,
-    upcoming,
-    nowPlaying,
-    popularTv,
-    topRatedTv,
-    onAir,
-    hiddenMovies,
-    hiddenTv,
-    demandMovies,
-    demandTv,
-  ] = await Promise.all([
-    safeFetch(() => getTrending("all", "week"), empty),
-    safeFetch(() => getPopular("movie"), empty),
-    safeFetch(() => getTopRated("movie"), empty),
-    safeFetch(() => getUpcoming(), empty),
-    safeFetch(() => getNowPlaying(), empty),
-    safeFetch(() => getPopular("tv"), empty),
-    safeFetch(() => getTopRated("tv"), empty),
-    safeFetch(() => getOnTheAir(), empty),
-    safeFetch(() => getHiddenGems("movie"), empty),
-    safeFetch(() => getHiddenGems("tv"), empty),
-    safeFetch(() => getInDemand("movie"), empty),
-    safeFetch(() => getInDemand("tv"), empty),
-  ]);
-
-  const heroItem = trending.results[0] || popularMovies.results[0];
+  const trending = await safeFetch(() => getTrending("all", "week"), { results: [] as Movie[] });
+  const heroItem = trending.results[0] || (await safeFetch(() => getPopular("movie"), { results: [] as Movie[] })).results[0];
   const heroType = heroItem?.media_type || (heroItem?.title ? "movie" : "tv");
   const heroDetails = heroItem
     ? await (heroType === "tv" ? getTvDetails(heroItem.id) : getMovieDetails(heroItem.id)).catch(() => null)
@@ -95,20 +60,7 @@ export default async function HomePage() {
         <CatalogUnavailable />
       )}
 
-      <div className="relative -mt-12 z-10 space-y-2 pb-8">
-        <MovieRow id="most-watched" title="Popular Movies" items={popularMovies.results} mediaType="movie" />
-        <MovieRow title="Trending This Week" items={trending.results.slice(0, 20)} />
-        <MovieRow title="🔥 In Demand" items={demandMovies.results} mediaType="movie" />
-        <MovieRow title="💎 Hidden Gems – Movies" items={hiddenMovies.results} mediaType="movie" />
-        <MovieRow title="Top Rated Movies" items={topRatedMovies.results} mediaType="movie" />
-        <MovieRow title="Now Playing in Theaters" items={nowPlaying.results} mediaType="movie" />
-        <MovieRow title="Coming Soon" items={upcoming.results} mediaType="movie" />
-        <MovieRow title="🔥 In Demand TV" items={demandTv.results} mediaType="tv" />
-        <MovieRow title="💎 Hidden Gems – TV" items={hiddenTv.results} mediaType="tv" />
-        <MovieRow title="Popular TV Shows" items={popularTv.results} mediaType="tv" />
-        <MovieRow title="Top Rated TV Shows" items={topRatedTv.results} mediaType="tv" />
-        <MovieRow title="On The Air" items={onAir.results} mediaType="tv" />
-      </div>
+      {heroItem && <HomeCatalog />}
     </div>
   );
 }

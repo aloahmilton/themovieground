@@ -14,28 +14,19 @@ export default function Hero({ item, trailerKey }: Props) {
   const rating = item.vote_average ? item.vote_average.toFixed(1) : null;
 
   return (
-    <section className="relative h-[52vh] min-h-[360px] max-h-[520px] w-full overflow-hidden">
+    <section className="relative h-[52vh] min-h-[500px] max-h-[620px] w-full overflow-hidden md:min-h-[400px]">
       <div className="absolute inset-0">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={getImageUrl(item.backdrop_path || item.poster_path, "w1280")}
           alt={title}
-          className={`h-full w-full object-cover object-center ${trailerKey ? "opacity-40" : ""}`}
+          className="h-full w-full object-cover object-center"
         />
-        {trailerKey && (
-          <iframe
-            src={`https://www.youtube-nocookie.com/embed/${trailerKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${trailerKey}&playsinline=1&rel=0&modestbranding=1`}
-            title={`${title} official trailer preview`}
-            allow="autoplay; encrypted-media; picture-in-picture"
-            referrerPolicy="strict-origin-when-cross-origin"
-            className="absolute inset-0 h-full w-full border-0"
-          />
-        )}
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40" />
       </div>
 
-      <div className="relative h-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex items-end pb-16 md:pb-24">
+      <div className="relative mx-auto flex h-full max-w-[1600px] flex-col-reverse items-start justify-end gap-4 px-4 pb-9 sm:px-6 md:flex-row md:items-end md:justify-between md:gap-8 md:px-8 md:pb-14">
         <div className="max-w-2xl space-y-4 md:space-y-6">
           <div className="flex items-center gap-3 text-sm text-gray-300">
             {year && <span>{year}</span>}
@@ -81,6 +72,18 @@ export default function Hero({ item, trailerKey }: Props) {
             </Link>
           </div>
         </div>
+
+        {trailerKey && (
+          <div className="aspect-video w-[min(64vw,360px)] shrink-0 overflow-hidden rounded-md border border-white/15 bg-black shadow-2xl shadow-black/50 md:w-[min(38vw,480px)]">
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${trailerKey}?autoplay=1&mute=1&controls=1&loop=1&playlist=${trailerKey}&playsinline=1&rel=0&modestbranding=1`}
+              title={`${title} official trailer preview`}
+              allow="autoplay; encrypted-media; picture-in-picture"
+              referrerPolicy="strict-origin-when-cross-origin"
+              className="h-full w-full border-0"
+            />
+          </div>
+        )}
       </div>
     </section>
   );
