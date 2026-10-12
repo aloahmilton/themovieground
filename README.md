@@ -1,80 +1,89 @@
 # The Movie Ground 🎬
 
-A complete **Netflix + Prime Video + MovieBox** style movie & TV discovery platform.
+A complete **Netflix + Prime Video + MovieBox** style discovery platform for **Movies, TV Shows & Sports**.
 
-Powered by the free **TMDB API**.
+Powered by free APIs: **TMDB**, **TheSportsDB**, and **Jolpica F1**.
 
 ## Features
 
-### Discovery
-- 🔥 **Trending** this week
-- 🔥 **In Demand** (high popularity + votes)
-- 💎 **Hidden Gems** (high rating, lower popularity)
-- Popular, Top Rated, Now Playing, Upcoming, On The Air
-- Full **Genre** browser (Movies + TV)
-- Language-aware discovery
+### Movies & TV
+- Trending, Popular, Top Rated, Now Playing, Upcoming, On The Air
+- 🔥 **In Demand** and 💎 **Hidden Gems** rows
+- Full search with Movies / TV filter
+- **Language filter** (English, French, Spanish, Japanese, Korean, Hindi, Arabic…)
+- **Genre browser** with per-genre pages
+- Movie & TV detail pages: cast, trailer, similar titles, ratings
+- **My Watchlist** (saved in browser)
 
-### Search & Details
-- Powerful multi-search (movies + TV)
-- Movie & TV detail pages with cast, trailers, similar titles
-- Ratings, runtime, seasons, status
+### Sports
+- Premier League, La Liga, Serie A, Bundesliga, Ligue 1
+- NBA, NFL, MLB
+- League pages with upcoming fixtures, recent results & teams
+- **Formula 1** – current driver standings + race calendar
 
-### Personal
-- **My Watchlist** (saved in browser localStorage)
-- One-click “My List” button on every detail page
-
-### UI/UX
+### UI
 - Dark Netflix-inspired design
-- Horizontal carousels
-- Fully responsive (mobile-first polish)
-- Fast SSR + 1-hour cache
+- Horizontal carousels, hero banner
+- Fully responsive (mobile-first)
+- Fast SSR + caching
 
 ## Quick Start
 
-1. Get free TMDB API key → https://www.themoviedb.org/settings/api
-2. ```bash
-   git clone https://github.com/aloahmilton/themovieground.git
-   cd themovieground
-   npm install
-   cp .env.example .env.local
-   ```
-3. Put your key in `.env.local`:
-   ```
-   TMDB_API_KEY=your_key_here
-   ```
-4. ```bash
-   npm run dev
-   ```
-5. Open http://localhost:3000
+### 1. Get a free TMDB API key
+https://www.themoviedb.org/settings/api  
+(Create account → Settings → API → Request Developer key)
+
+### 2. Clone & install
+```bash
+git clone https://github.com/aloahmilton/themovieground.git
+cd themovieground
+npm install
+```
+
+### 3. Environment variables
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local`:
+```env
+TMDB_API_KEY=your_tmdb_api_key_here
+SPORTSDB_API_KEY=3
+```
+
+### 4. Run
+```bash
+npm run dev
+```
+Open http://localhost:3000
 
 ## Deploy on Vercel
-Import the repo → add env var `TMDB_API_KEY` → Deploy.
+1. Import the repo on [vercel.com](https://vercel.com)
+2. Add Environment Variable: `TMDB_API_KEY` = your key
+3. (Optional) `SPORTSDB_API_KEY=3`
+4. Deploy
 
 ## Project Structure
 ```
 src/
 ├── app/
-│   ├── page.tsx                 # Home with all rows
-│   ├── search/page.tsx
-│   ├── genres/page.tsx          # Genre browser
-│   ├── genres/[id]/page.tsx
-│   ├── watchlist/page.tsx       # Personal list
-│   ├── movie/[id]/page.tsx
-│   └── tv/[id]/page.tsx
-├── components/
-│   ├── Navbar.tsx
-│   ├── Hero.tsx
-│   ├── MovieCard.tsx
-│   ├── MovieRow.tsx
-│   └── WatchlistButton.tsx
+│   ├── page.tsx                 # Home
+│   ├── search/page.tsx          # Search + language filter
+│   ├── genres/                  # Genre browser
+│   ├── movie/[id]/page.tsx     # Movie details
+│   ├── tv/[id]/page.tsx        # TV details
+│   ├── watchlist/page.tsx      # Personal list
+│   └── sports/                  # Sports + F1
+├── components/                  # Navbar, Hero, Cards, etc.
 └── lib/
-    ├── tmdb.ts                  # All TMDB helpers + Hidden Gems / In Demand
-    └── watchlist.ts             # localStorage watchlist
+    ├── tmdb.ts                   # Movies & TV API
+    ├── sports.ts                 # Sports + F1 API
+    └── watchlist.ts              # localStorage watchlist
 ```
 
-## Notes
-- This is a **discovery** platform. It does not stream or download copyrighted content.
-- Watchlist is stored locally in your browser.
+## Important notes
+- This is a **discovery** platform only. It does not stream or download copyrighted content.
+- Watchlist is stored in the browser (localStorage).
 - Attribution: This product uses the TMDB API but is not endorsed or certified by TMDB.
 
 ## License
