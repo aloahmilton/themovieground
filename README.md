@@ -1,90 +1,106 @@
-# The Movie Ground 🎬
+# The Movie Ground
 
-A complete **Netflix + Prime Video + MovieBox** style discovery platform for **Movies, TV Shows & Sports**.
+A **monolith** Next.js app for discovering movies, TV shows, sports, and (optionally) authorized live TV channels.
 
-Powered by free APIs: **TMDB**, **TheSportsDB**, and **Jolpica F1**.
+**Not a pirate streaming site.** We do not host or stream copyrighted movies/TV episodes.
 
-## Features
+## Why users cannot stream Netflix/Prime/etc. movies here
 
-### Movies & TV
-- Trending, Popular, Top Rated, Now Playing, Upcoming, On The Air
-- 🔥 **In Demand** and 💎 **Hidden Gems** rows
-- Full search with Movies / TV filter
-- **Language filter** (English, French, Spanish, Japanese, Korean, Hindi, Arabic…)
-- **Genre browser** with per-genre pages
-- Movie & TV detail pages: cast, trailer, similar titles, ratings
-- **My Watchlist** (saved in browser)
+| Reason | Explanation |
+|--------|-------------|
+| **Copyright law** | Movies and series are owned by studios and licensed to Netflix, Disney+, Prime, etc. Streaming them without a license is illegal. |
+| **No license** | This project has no deals with studios or aggregators to deliver full films. |
+| **API terms** | TMDB only provides **metadata** (titles, posters, cast, trailers, where-to-watch links). It does not provide video files. |
+| **Risk** | Hosting or embedding pirated streams can get the site taken down, the domain blocked, and the operator in legal trouble. |
 
-### Sports
-- Premier League, La Liga, Serie A, Bundesliga, Ligue 1
-- NBA, NFL, MLB
-- League pages with upcoming fixtures, recent results & teams
-- **Formula 1** – current driver standings + race calendar
+### What *is* allowed (and already built)
 
-### UI
-- Dark Netflix-inspired design
-- Horizontal carousels, hero banner
-- Fully responsive (mobile-first)
-- Fast SSR + caching
+1. **Discovery** – search, genres, hidden gems, ratings, cast, similar titles  
+2. **Official trailers** – YouTube links from TMDB  
+3. **Where to Watch** – legal providers for your region (Netflix, Prime, etc.) via TMDB  
+4. **Local Channels** (`/watch-tv`) – only if **you** supply a legal HTTPS M3U playlist via `IPTV_PLAYLIST_URL` (e.g. public-domain or licensed channels you have rights to use)
 
-## Quick Start
+If you want full-film streaming legally, you need licensed content (your own rights, a paid aggregator API, or partner integrations). That is a business/legal project, not a free-API side project.
 
-### 1. Get a free TMDB API key
-https://www.themoviedb.org/settings/api  
-(Create account → Settings → API → Request Developer key)
+---
 
-### 2. Clone & install
+## Architecture (monolith)
+
+One Next.js 16 app, one deploy unit. No monorepo packages.
+
+```
+src/
+├── app/                    # Routes (App Router)
+│   ├── page.tsx             # Home + catalog rows
+│   ├── search/              # Search + filters
+│   ├── genres/              # Genre browser
+│   ├── movie/[id]/         # Movie detail + Where to Watch
+│   ├── tv/[id]/            # TV detail
+│   ├── watchlist/           # Browser watchlist + export
+│   ├── sports/              # Leagues + F1
+│   ├── watch-tv/            # Legal IPTV browser (optional)
+│   ├── about/  donate/
+│   └── api/                 # catalog, search, locale, watch-tv
+├── components/              # UI (nav, hero, cards, player…)
+└── lib/                     # TMDB, sports, IPTV, catalog, i18n
+```
+
+**Data flow**
+
+- Movies/TV metadata → TMDB API (`TMDB_API_KEY`)
+- Sports → TheSportsDB + Jolpica F1
+- Live TV → optional M3U over HTTPS (`IPTV_PLAYLIST_URL`)
+- Watchlist → browser `localStorage` only
+
+---
+
+## Setup
+
 ```bash
 git clone https://github.com/aloahmilton/themovieground.git
 cd themovieground
 npm install
-```
-
-### 3. Environment variables
-```bash
 cp .env.example .env.local
 ```
 
-Edit `.env.local`:
+### Environment (`.env.local`)
+
 ```env
-TMDB_API_KEY=your_tmdb_api_key_here
+# Required for movies & TV
+TMDB_API_KEY=your_tmdb_v3_key
+
+# Optional sports
 SPORTSDB_API_KEY=3
+
+# Optional: legal live-TV playlist (HTTPS M3U only)
+# IPTV_PLAYLIST_URL=https://example.com/your-licensed-playlist.m3u
 ```
 
-### 4. Run
 ```bash
 npm run dev
 ```
+
 Open http://localhost:3000
 
-## Deploy on Vercel
-1. Import the repo on [vercel.com](https://vercel.com)
-2. Add Environment Variable: `TMDB_API_KEY` = your key
-3. (Optional) `SPORTSDB_API_KEY=3`
-4. Deploy
+### Vercel
 
-## Project Structure
-```
-src/
-├── app/
-│   ├── page.tsx                 # Home
-│   ├── search/page.tsx          # Search + language filter
-│   ├── genres/                  # Genre browser
-│   ├── movie/[id]/page.tsx     # Movie details
-│   ├── tv/[id]/page.tsx        # TV details
-│   ├── watchlist/page.tsx      # Personal list
-│   └── sports/                  # Sports + F1
-├── components/                  # Navbar, Hero, Cards, etc.
-└── lib/
-    ├── tmdb.ts                   # Movies & TV API
-    ├── sports.ts                 # Sports + F1 API
-    └── watchlist.ts              # localStorage watchlist
-```
+1. Import the repo  
+2. Set `TMDB_API_KEY` (and optional `IPTV_PLAYLIST_URL` / `SPORTSDB_API_KEY`)  
+3. Deploy  
 
-## Important notes
-- This is a **discovery** platform only. It does not stream or download copyrighted content.
-- Watchlist is stored in the browser (localStorage).
-- Attribution: This product uses the TMDB API but is not endorsed or certified by TMDB.
+Styles use Tailwind v4 + `@tailwindcss/postcss` (`postcss.config.mjs`). If CSS looks broken after deploy, redeploy after pulling latest `main`.
+
+---
+
+## Features summary
+
+- Netflix-style home rows (trending, in demand, hidden gems, …)
+- Search, genres, language filters
+- Movie/TV detail: cast, trailer, similar, watchlist, **Where to Watch**
+- Sports + Formula 1
+- Optional **Local Channels** player (HLS.js) for authorized playlists
+- Interface language toggle, about & donate pages
 
 ## License
-MIT
+
+MIT — use responsibly. Do not add pirated streams.
